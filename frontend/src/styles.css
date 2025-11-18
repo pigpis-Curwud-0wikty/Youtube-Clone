@@ -1,0 +1,787 @@
+/* Global YouTube-like styles */
+:root {
+  --yt-bg: #0f0f0f;
+  --yt-surface: #121212;
+  --yt-text: #f1f1f1;
+  --yt-muted: #aaa;
+  --yt-accent: #3ea6ff;
+  --yt-card: #1f1f1f;
+  --yt-border: #303030;
+  --yt-red: #ff0000;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--yt-bg);
+  color: var(--yt-text);
+  font-family: 'Roboto', 'Arial', sans-serif;
+  line-height: 1.5;
+}
+
+/* App shell layout */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navbar styled like YouTube */
+app-navbar .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: var(--yt-surface);
+  border-bottom: 1px solid var(--yt-border);
+  gap: 1rem;
+}
+
+app-navbar .navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+app-navbar .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+app-navbar .brand-icon {
+  color: var(--yt-red);
+  font-size: 1.5rem;
+}
+
+app-navbar .navbar-center {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+app-navbar .search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--yt-card);
+  border: 1px solid var(--yt-border);
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+app-navbar .search-bar input {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  color: var(--yt-text);
+  outline: none;
+}
+
+app-navbar .search-bar button {
+  padding: 0.5rem 1rem;
+  background: var(--yt-border);
+  border: none;
+  color: var(--yt-text);
+  cursor: pointer;
+}
+
+app-navbar .navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+app-navbar .user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+}
+
+app-navbar .nav-link {
+  color: var(--yt-accent);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--yt-accent);
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+
+app-navbar .nav-link:hover {
+  background: var(--yt-accent);
+  color: #fff;
+}
+
+app-navbar .user-menu {
+  position: relative;
+}
+
+app-navbar .dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: var(--yt-card);
+  border: 1px solid var(--yt-border);
+  border-radius: 8px;
+  min-width: 250px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+app-navbar .user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+app-navbar .dropdown-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+app-navbar .user-name {
+  margin: 0;
+  font-weight: 600;
+}
+
+app-navbar .user-email {
+  margin: 0.25rem 0 0;
+  color: var(--yt-muted);
+  font-size: 0.875rem;
+}
+
+app-navbar .menu-divider {
+  height: 1px;
+  background: var(--yt-border);
+  margin: 0.5rem 0;
+}
+
+app-navbar .dropdown-menu a,
+app-navbar .dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  color: var(--yt-text);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+app-navbar .dropdown-menu a:hover,
+app-navbar .dropdown-menu button:hover {
+  background: var(--yt-border);
+}
+
+/* Video List */
+app-video-list .video-list-container {
+  padding: 1.5rem;
+}
+
+app-video-list .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+app-video-list .header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+app-video-list .upload-btn {
+  background: var(--yt-red);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+app-video-list .upload-btn:hover {
+  background: #cc0000;
+}
+
+app-video-list .upload-form {
+  background: var(--yt-card);
+  border: 1px solid var(--yt-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+app-video-list .upload-form label {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+app-video-list .upload-form input,
+app-video-list .upload-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--yt-surface);
+  border: 1px solid var(--yt-border);
+  border-radius: 8px;
+  color: var(--yt-text);
+  margin-top: 0.5rem;
+}
+
+app-video-list .thumbnail-preview {
+  max-width: 200px;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+}
+
+app-video-list .form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+app-video-list .form-actions button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+app-video-list .form-actions button[type="submit"] {
+  background: var(--yt-accent);
+  color: #fff;
+}
+
+app-video-list .form-actions button[type="button"] {
+  background: var(--yt-border);
+  color: var(--yt-text);
+}
+
+app-video-list .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+app-video-list .card {
+  background: var(--yt-card);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+app-video-list .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+app-video-list .thumbnail-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+app-video-list .thumbnail-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+app-video-list .duration {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+app-video-list .card-content {
+  padding: 1rem;
+}
+
+app-video-list .channel-info {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+app-video-list .channel-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+app-video-list .video-title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+app-video-list .channel-name {
+  margin: 0.25rem 0;
+  color: var(--yt-muted);
+  font-size: 0.875rem;
+}
+
+app-video-list .video-meta {
+  margin: 0.25rem 0 0;
+  color: var(--yt-muted);
+  font-size: 0.875rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+app-video-list .loading,
+app-video-list .error,
+app-video-list .empty {
+  text-align: center;
+  padding: 3rem;
+  color: var(--yt-muted);
+}
+
+app-video-list .error {
+  color: #ff6b6b;
+}
+
+/* Video Player */
+app-video-player .player-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+app-video-player .video-container {
+  display: flex;
+  gap: 1.5rem;
+}
+
+app-video-player .main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+app-video-player video {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  background: #000;
+  display: block;
+}
+
+app-video-player .video-info {
+  margin-top: 1rem;
+}
+
+app-video-player .video-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+app-video-player .video-meta-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--yt-border);
+}
+
+app-video-player .channel-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+app-video-player .channel-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+app-video-player .channel-name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+app-video-player .subscriber-count {
+  margin: 0.25rem 0 0;
+  color: var(--yt-muted);
+  font-size: 0.875rem;
+}
+
+app-video-player .subscribe-btn {
+  background: var(--yt-red);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+app-video-player .subscribe-btn:hover {
+  background: #cc0000;
+}
+
+app-video-player .action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+app-video-player .action-btn {
+  background: var(--yt-border);
+  color: var(--yt-text);
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s;
+}
+
+app-video-player .action-btn:hover {
+  background: #3a3a3a;
+}
+
+app-video-player .action-btn.active {
+  background: var(--yt-accent);
+  color: #fff;
+}
+
+app-video-player .video-description {
+  background: var(--yt-card);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+app-video-player .video-stats {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+  color: var(--yt-muted);
+  font-size: 0.875rem;
+}
+
+app-video-player .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+app-video-player .tag {
+  background: var(--yt-surface);
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  color: var(--yt-accent);
+}
+
+app-video-player .comments-section {
+  margin-top: 2rem;
+}
+
+app-video-player .comments-section h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.125rem;
+}
+
+app-video-player .comment-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+app-video-player .comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+app-video-player .comment-input-form {
+  flex: 1;
+  display: flex;
+  gap: 0.5rem;
+}
+
+app-video-player .comment-input {
+  flex: 1;
+  padding: 0.75rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--yt-border);
+  color: var(--yt-text);
+  outline: none;
+}
+
+app-video-player .comment-input:focus {
+  border-bottom-color: var(--yt-accent);
+}
+
+app-video-player .comment-input-form button {
+  background: var(--yt-accent);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+app-video-player .comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+app-video-player .comment {
+  display: flex;
+  gap: 1rem;
+}
+
+app-video-player .comment-content {
+  flex: 1;
+}
+
+app-video-player .comment-header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+app-video-player .comment-author {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+app-video-player .comment-date {
+  color: var(--yt-muted);
+  font-size: 0.875rem;
+}
+
+app-video-player .comment-text {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+app-video-player .comment-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+app-video-player .edit-btn,
+app-video-player .delete-btn {
+  background: transparent;
+  border: none;
+  color: var(--yt-accent);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+}
+
+app-video-player .delete-btn {
+  color: #ff6b6b;
+}
+
+app-video-player .edit-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+app-video-player .edit-input {
+  flex: 1;
+  padding: 0.5rem;
+  background: var(--yt-surface);
+  border: 1px solid var(--yt-border);
+  border-radius: 4px;
+  color: var(--yt-text);
+}
+
+app-video-player .edit-form button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+app-video-player .no-comments {
+  text-align: center;
+  padding: 2rem;
+  color: var(--yt-muted);
+}
+
+app-video-player .loading,
+app-video-player .error {
+  text-align: center;
+  padding: 3rem;
+}
+
+app-video-player .error {
+  color: #ff6b6b;
+}
+
+/* Auth forms */
+app-login .auth-form,
+app-register .auth-form {
+  max-width: 420px;
+  margin: 3rem auto;
+  background: var(--yt-card);
+  border: 1px solid var(--yt-border);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+app-login .auth-form h2,
+app-register .auth-form h2 {
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+app-login label,
+app-register label {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+app-login input,
+app-register input,
+app-register textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--yt-border);
+  background: var(--yt-surface);
+  color: var(--yt-text);
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+app-register .logo-preview {
+  max-width: 100px;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+}
+
+app-login button,
+app-register button {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--yt-red);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.2s;
+}
+
+app-login button:hover,
+app-register button:hover {
+  background: #cc0000;
+}
+
+app-login button:disabled,
+app-register button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+app-login .error,
+app-register .error {
+  color: #ff6b6b;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+app-login .success,
+app-register .success {
+  color: #4caf50;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+app-login .auth-links,
+app-login .auth-footer,
+app-register .auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--yt-muted);
+  font-size: 0.875rem;
+}
+
+app-login .link {
+  color: var(--yt-accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+app-login .forgot-password,
+app-register .verification {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--yt-border);
+}
+
+app-login .forgot-password h3,
+app-register .verification h3 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+}
+
+/* Utility */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
