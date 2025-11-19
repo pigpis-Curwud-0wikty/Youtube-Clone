@@ -15,6 +15,11 @@ const videoSchema = new mongoose.Schema(
     likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     disLikedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     viewedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending',
+    },
   },
   { timestamps: true },
 )

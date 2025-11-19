@@ -10,9 +10,9 @@ export const ConnectDB = async () => {
 
         // Connection options for MongoDB Atlas
         const options = {
-            serverSelectionTimeoutMS: 10000, // زيادة الوقت للاتصال
+            serverSelectionTimeoutMS: 30000, // زيادة الوقت للاتصال إلى 30 ثانية
             socketTimeoutMS: 45000,
-            connectTimeoutMS: 10000,
+            connectTimeoutMS: 30000,
             retryWrites: true,
             w: 'majority',
         };

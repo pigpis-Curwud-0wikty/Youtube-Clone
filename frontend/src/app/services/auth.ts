@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable, tap, catchError, throwError } from 'rxjs'
 
 export interface LoginResponse {
@@ -104,8 +104,45 @@ export class Auth {
     return this.http.post<{ message: string; data: any }>(`${this.base}/subscribe`, { ChannelId: channelId })
   }
 
+  getProfile(): Observable<UserProfile> {
+    const token = this.getToken()
+    let headers = new HttpHeaders()
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`)
+    }
+    return this.http.get<UserProfile>(`${this.base}/profile`, { headers }).pipe(
+      catchError((error) => {
+        return throwError(() => error.error?.message || 'Failed to fetch profile')
+      })
+    )
+  }
+
   logout(): void {
     if (!this.isBrowser) return
     localStorage.removeItem(this.KEY)
   }
+}
+
+export interface UserProfile {
+  _id: string
+  ChannelName: string
+  email: string
+  phone: string
+  logoUrl: string
+  subscriber: number
+  subscribedChannels: string[]
+  createdAt: string
+  stats: {
+    totalVideos: number
+    totalViews: number
+    totalLikes: number
+  }
+  recentVideos: Array<{
+    _id: string
+    title: string
+    thumbnailUrl: string
+    views: number
+    likes: number
+    createdAt: string
+  }>
 }

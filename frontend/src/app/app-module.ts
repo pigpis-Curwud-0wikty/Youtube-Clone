@@ -10,10 +10,11 @@ import { Login } from './pages/login/login'
 import { Register } from './pages/register/register'
 import { VideoList } from './pages/video-list/video-list'
 import { VideoPlayer } from './pages/video-player/video-player'
+import { Profile } from './pages/profile/profile'
 import { AuthInterceptor } from './interceptors/auth.interceptor'
 
 @NgModule({
-  declarations: [App, Navbar, Login, Register, VideoList, VideoPlayer],
+  declarations: [App, Navbar, Login, Register, VideoList, VideoPlayer, Profile],
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
   providers: [
     provideBrowserGlobalErrorListeners(),

@@ -226,7 +226,8 @@ app-video-list .upload-btn:hover {
   background: #cc0000;
 }
 
-app-video-list .upload-form {
+app-video-list .upload-form,
+app-video-list .update-form {
   background: var(--yt-card);
   border: 1px solid var(--yt-border);
   border-radius: 12px;
@@ -234,20 +235,114 @@ app-video-list .upload-form {
   margin-bottom: 1.5rem;
 }
 
-app-video-list .upload-form label {
+/* Enhanced Update Form Styling */
+app-video-list .update-form {
+  position: relative;
+  background: linear-gradient(135deg, var(--yt-card) 0%, #1a1a1a 100%);
+  border: 1px solid var(--yt-border);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+app-video-list .update-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--yt-red), var(--yt-accent), var(--yt-red));
+  border-radius: 16px 16px 0 0;
+}
+
+app-video-list .update-form h3 {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--yt-accent), var(--yt-red));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+app-video-list .update-form h3::before {
+  content: '✏️';
+  font-size: 1.5rem;
+}
+
+app-video-list .upload-form label,
+app-video-list .update-form label {
   display: block;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+app-video-list .update-form label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--yt-text);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
 }
 
 app-video-list .upload-form input,
-app-video-list .upload-form textarea {
+app-video-list .upload-form textarea,
+app-video-list .update-form input,
+app-video-list .update-form textarea {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.875rem 1rem;
   background: var(--yt-surface);
-  border: 1px solid var(--yt-border);
-  border-radius: 8px;
+  border: 2px solid var(--yt-border);
+  border-radius: 10px;
   color: var(--yt-text);
   margin-top: 0.5rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+app-video-list .update-form input,
+app-video-list .update-form textarea {
+  background: rgba(31, 31, 31, 0.6);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+app-video-list .update-form input:focus,
+app-video-list .update-form textarea:focus {
+  outline: none;
+  border-color: var(--yt-accent);
+  background: rgba(31, 31, 31, 0.8);
+  box-shadow: 0 0 0 3px rgba(62, 166, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+app-video-list .update-form textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.6;
 }
 
 app-video-list .thumbnail-preview {
@@ -256,10 +351,67 @@ app-video-list .thumbnail-preview {
   border-radius: 8px;
 }
 
+app-video-list .update-form .thumbnail-preview {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  margin-top: 1rem;
+  border-radius: 12px;
+  border: 2px solid var(--yt-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+app-video-list .update-form .thumbnail-preview:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(62, 166, 255, 0.2);
+}
+
+app-video-list .update-form input[type="file"] {
+  padding: 0.75rem;
+  background: var(--yt-surface);
+  border: 2px dashed var(--yt-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--yt-muted);
+  font-size: 0.9rem;
+}
+
+app-video-list .update-form input[type="file"]:hover {
+  border-color: var(--yt-accent);
+  background: rgba(62, 166, 255, 0.05);
+}
+
+app-video-list .update-form input[type="file"]::file-selector-button {
+  background: var(--yt-accent);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  margin-right: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+app-video-list .update-form input[type="file"]::file-selector-button:hover {
+  background: #2d8fdd;
+}
+
 app-video-list .form-actions {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--yt-border);
+}
+
+app-video-list .update-form .form-actions {
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--yt-border);
 }
 
 app-video-list .form-actions button {
@@ -268,6 +420,36 @@ app-video-list .form-actions button {
   border: none;
   cursor: pointer;
   font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+app-video-list .update-form .form-actions button {
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+app-video-list .update-form .form-actions button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+app-video-list .update-form .form-actions button:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 app-video-list .form-actions button[type="submit"] {
@@ -275,9 +457,44 @@ app-video-list .form-actions button[type="submit"] {
   color: #fff;
 }
 
+app-video-list .update-form .form-actions button[type="submit"] {
+  background: linear-gradient(135deg, var(--yt-accent), #2d8fdd);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(62, 166, 255, 0.3);
+  flex: 1;
+}
+
+app-video-list .update-form .form-actions button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(62, 166, 255, 0.4);
+}
+
+app-video-list .update-form .form-actions button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+app-video-list .update-form .form-actions button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 app-video-list .form-actions button[type="button"] {
   background: var(--yt-border);
   color: var(--yt-text);
+}
+
+app-video-list .update-form .form-actions button[type="button"] {
+  background: transparent;
+  color: var(--yt-text);
+  border: 2px solid var(--yt-border);
+  flex: 1;
+}
+
+app-video-list .update-form .form-actions button[type="button"]:hover {
+  background: var(--yt-border);
+  border-color: var(--yt-muted);
+  transform: translateY(-2px);
 }
 
 app-video-list .grid {
@@ -376,6 +593,95 @@ app-video-list .empty {
 
 app-video-list .error {
   color: #ff6b6b;
+}
+
+app-video-list .update-form .error,
+app-video-list .update-form .success {
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+app-video-list .update-form .error {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  color: #ff6b6b;
+}
+
+app-video-list .update-form .error::before {
+  content: '⚠️';
+  font-size: 1.25rem;
+}
+
+app-video-list .update-form .success {
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+app-video-list .update-form .success::before {
+  content: '✅';
+  font-size: 1.25rem;
+}
+
+/* Card Actions for My Videos */
+app-video-list .card-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(31, 31, 31, 0.5);
+  border-top: 1px solid var(--yt-border);
+  justify-content: flex-end;
+}
+
+app-video-list .update-btn,
+app-video-list .delete-btn {
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+app-video-list .update-btn {
+  background: linear-gradient(135deg, var(--yt-accent), #2d8fdd);
+  color: #fff;
+}
+
+app-video-list .update-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(62, 166, 255, 0.3);
+}
+
+app-video-list .delete-btn {
+  background: linear-gradient(135deg, #ff6b6b, #ff5252);
+  color: #fff;
+}
+
+app-video-list .delete-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
 }
 
 /* Video Player */
@@ -777,6 +1083,383 @@ app-login .forgot-password h3,
 app-register .verification h3 {
   margin: 0 0 1rem;
   font-size: 1rem;
+}
+
+/* Profile Page */
+app-profile .profile-container {
+  min-height: 100vh;
+  background: var(--yt-bg);
+}
+
+app-profile .profile-header {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+app-profile .profile-banner {
+  height: 200px;
+  background: linear-gradient(135deg, var(--yt-red) 0%, var(--yt-accent) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+app-profile .banner-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%);
+}
+
+app-profile .profile-info {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+  transform: translateY(-80px);
+}
+
+app-profile .avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+app-profile .profile-avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 6px solid var(--yt-surface);
+  object-fit: cover;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  background: var(--yt-card);
+  position: relative;
+  z-index: 2;
+}
+
+app-profile .avatar-ring {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  background: linear-gradient(135deg, var(--yt-red), var(--yt-accent)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: exclude;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+app-profile .profile-details {
+  flex: 1;
+  padding-bottom: 1rem;
+}
+
+app-profile .channel-name {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  background: linear-gradient(135deg, var(--yt-text), var(--yt-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+app-profile .channel-email {
+  color: var(--yt-muted);
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+}
+
+app-profile .profile-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+app-profile .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+app-profile .stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--yt-accent);
+  line-height: 1.2;
+}
+
+app-profile .stat-label {
+  font-size: 0.875rem;
+  color: var(--yt-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+app-profile .profile-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+app-profile .meta-item {
+  color: var(--yt-muted);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+app-profile .profile-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem 3rem;
+}
+
+app-profile .content-section {
+  margin-bottom: 3rem;
+}
+
+app-profile .section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--yt-border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+app-profile .section-title::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(135deg, var(--yt-red), var(--yt-accent));
+  border-radius: 2px;
+}
+
+app-profile .videos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+app-profile .video-card {
+  background: var(--yt-card);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--yt-border);
+}
+
+app-profile .video-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-color: var(--yt-accent);
+}
+
+app-profile .video-thumbnail {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  background: #000;
+}
+
+app-profile .video-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+app-profile .video-card:hover .video-thumbnail img {
+  transform: scale(1.05);
+}
+
+app-profile .video-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
+  padding: 0.75rem;
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #fff;
+}
+
+app-profile .video-info {
+  padding: 1rem;
+}
+
+app-profile .video-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+app-profile .video-date {
+  font-size: 0.875rem;
+  color: var(--yt-muted);
+  margin: 0;
+}
+
+app-profile .empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--yt-card);
+  border-radius: 12px;
+  border: 2px dashed var(--yt-border);
+}
+
+app-profile .empty-state p {
+  color: var(--yt-muted);
+  font-size: 1.125rem;
+  margin: 0 0 1.5rem;
+}
+
+app-profile .empty-state .upload-btn {
+  background: linear-gradient(135deg, var(--yt-accent), #2d8fdd);
+  color: #fff;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+app-profile .empty-state .upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(62, 166, 255, 0.4);
+}
+
+app-profile .actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+app-profile .action-card {
+  background: var(--yt-card);
+  border: 2px solid var(--yt-border);
+  border-radius: 12px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+app-profile .action-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--yt-accent);
+  box-shadow: 0 8px 24px rgba(62, 166, 255, 0.2);
+  background: rgba(62, 166, 255, 0.05);
+}
+
+app-profile .action-icon {
+  font-size: 3rem;
+  display: block;
+}
+
+app-profile .action-text {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--yt-text);
+}
+
+app-profile .loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  gap: 1.5rem;
+}
+
+app-profile .spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--yt-border);
+  border-top-color: var(--yt-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+app-profile .error {
+  text-align: center;
+  padding: 3rem;
+  color: #ff6b6b;
+}
+
+app-profile .error button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--yt-accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Video List Header Actions */
+app-video-list .header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+app-video-list .profile-btn {
+  background: linear-gradient(135deg, var(--yt-accent), #2d8fdd);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+app-video-list .profile-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(62, 166, 255, 0.3);
 }
 
 /* Utility */

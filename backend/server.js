@@ -13,12 +13,6 @@ dotenv.config()
 
 const app = express()
 
-// Connect to database
-ConnectDB().catch((error) => {
-    console.error('Failed to connect to database:', error);
-    process.exit(1);
-})
-
 app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -42,6 +36,21 @@ app.use('/api/v1/video', videoRoutes)
 app.use('/api/v1/comment', commentRoutes)
 
 const PORT = Number(process.env.PORT) || 8000
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`)
-})
+
+// Connect to database and then start server
+async function startServer() {
+  try {
+    // Wait for database connection
+    await ConnectDB()
+    
+    // Start server only after database is connected
+    app.listen(PORT, () => {
+      console.log(`Server is running at http://localhost:${PORT}`)
+    })
+  } catch (error) {
+    console.error('Failed to start server:', error)
+    process.exit(1)
+  }
+}
+
+startServer()

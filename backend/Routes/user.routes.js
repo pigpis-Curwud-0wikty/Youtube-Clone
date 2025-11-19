@@ -6,6 +6,7 @@ import User from "../Models/user.Model.js";
 import cloudinary from "../Config/Cloudinary.js";
 import { checkAuth } from "../Middleware/auth.middleware.js";
 import nodemailer from "nodemailer";
+import videoModel from "../Models/video.Model.js";
 
 const router = express.Router();
 
@@ -113,6 +114,7 @@ router.post("/login", async (req, res) => {
       token: token,
       subscriber: existingUser.subscriber,
       subscribedChannels: existingUser.subscribedChannels,
+      role: existingUser.role || 'user',
     });
   } catch (error) {
     console.error("Login Error", error);
@@ -281,6 +283,63 @@ router.post("/verify-email", async (req, res) => {
     res
       .status(500)
       .json({ error: "Something went wrong", message: error.message });
+  }
+});
+
+/* --------------------------- GET USER PROFILE --------------------------- */
+router.get("/profile", checkAuth, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Get user data
+    const user = await User.findById(userId).select('-password -otp -otpExpires -verificationCode');
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Get user's videos with stats
+    const videos = await videoModel.find({ user_id: userId })
+      .select('title thumbnailUrl createdAt viewedBy likedBy disLikedBy')
+      .sort({ createdAt: -1 });
+
+    // Calculate video statistics
+    const totalVideos = videos.length;
+    const totalViews = videos.reduce((sum, video) => sum + (video.viewedBy?.length || 0), 0);
+    const totalLikes = videos.reduce((sum, video) => sum + (video.likedBy?.length || 0), 0);
+
+    // Get user's profile data
+    const profileData = {
+      _id: user._id,
+      ChannelName: user.ChannelName,
+      email: user.email,
+      phone: user.phone,
+      logoUrl: user.logoUrl,
+      subscriber: user.subscriber || 0,
+      subscribedChannels: user.subscribedChannels || [],
+      createdAt: user.createdAt,
+      stats: {
+        totalVideos,
+        totalViews,
+        totalLikes
+      },
+      recentVideos: videos.slice(0, 6).map(v => ({
+        _id: v._id,
+        title: v.title,
+        thumbnailUrl: v.thumbnailUrl,
+        views: v.viewedBy?.length || 0,
+        likes: v.likedBy?.length || 0,
+        createdAt: v.createdAt
+      }))
+    };
+
+    res.status(200).json(profileData);
+  } catch (error) {
+    console.error("PROFILE ERROR:", error);
+    res.status(500).json({ 
+      error: "Something went wrong", 
+      message: error.message 
+    });
   }
 });
 

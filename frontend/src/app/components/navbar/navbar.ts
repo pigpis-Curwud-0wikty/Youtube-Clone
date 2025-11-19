@@ -34,7 +34,8 @@ import { Auth, UserData } from '../../services/auth'
                 </div>
               </div>
               <div class="menu-divider"></div>
-              <a [routerLink]="['/videos']" (click)="showMenu = false">My Videos</a>
+              <a [routerLink]="['/profile']" (click)="showMenu = false">My Profile</a>
+              <a [routerLink]="['/my-videos']" (click)="showMenu = false">My Videos</a>
               <button (click)="logout()">Sign Out</button>
             </div>
           </div>

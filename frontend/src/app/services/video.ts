@@ -143,4 +143,14 @@ export class Video {
       })
     )
   }
+
+  // Search videos by query (tags, title, description, words, letters)
+  search(query: string): Observable<VideoItem[]> {
+    const encodedQuery = encodeURIComponent(query.trim())
+    return this.http.get<VideoItem[]>(`${this.base}/search?q=${encodedQuery}`).pipe(
+      catchError((error) => {
+        return throwError(() => error.error?.message || 'Failed to search videos')
+      })
+    )
+  }
 }

@@ -39,6 +39,7 @@ router.post("/upload", checkAuth, async (req, res) => {
             thumbnailId: thumbnailUpload.public_id,
             category: category || 'General',
             tags: tags ? tags.split(",").map(t => t.trim()) : [],
+            status: 'approved', // Videos are auto-approved
         });
 
         await newVideo.save();
@@ -147,7 +148,7 @@ router.get("/all", async (req, res) => {
     }
 })
 
-//get my videos
+//get my videos (users can see all their videos including pending/rejected)
 router.get("/my-videoes", checkAuth, async(req, res) => {
     try {
         const videos = await videoModel.find({ user_id: req.user._id })
@@ -273,6 +274,46 @@ router.get("/category/:category", async (req, res) => {
         res.status(200).json(videosWithLikes);
     } catch (error) {
         console.error("Fetch Error:", error);
+        res.status(500).json({error: "Something went wrong", message: error.message});
+    }
+})
+
+//search videos by query (tags, title, description, words, letters)
+router.get("/search", async (req, res) => {
+    try {
+        const query = req.query.q || req.query.query || '';
+        
+        if (!query || query.trim() === '') {
+            return res.status(400).json({error: "Search query is required"});
+        }
+
+        // Create case-insensitive regex pattern for searching
+        const searchRegex = new RegExp(query.trim(), 'i');
+        
+        // Search in title, description, tags, and category
+        // For tags array (array of strings), MongoDB will match if any element matches the regex
+        const videos = await videoModel.find({
+            $or: [
+                { title: { $regex: searchRegex } },
+                { description: { $regex: searchRegex } },
+                { tags: searchRegex },
+                { category: { $regex: searchRegex } }
+            ]
+        })
+        .populate('user_id', 'ChannelName logoUrl subscriber')
+        .sort({ createdAt: -1 });
+        
+        const videosWithLikes = videos.map(v => {
+            const videoObj = v.toJSON();
+            videoObj.likes = videoObj.likedBy || [];
+            videoObj.dislikes = videoObj.disLikedBy || [];
+            videoObj.views = videoObj.viewedBy?.length || 0;
+            return videoObj;
+        });
+
+        res.status(200).json(videosWithLikes);
+    } catch (error) {
+        console.error("Search Error:", error);
         res.status(500).json({error: "Something went wrong", message: error.message});
     }
 })
