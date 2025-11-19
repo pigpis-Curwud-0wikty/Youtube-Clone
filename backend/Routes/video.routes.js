@@ -8,6 +8,71 @@ import { checkAuth } from '../Middleware/auth.middleware.js';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/v1/video/upload:
+ *   post:
+ *     tags: [Videos]
+ *     summary: Upload a new video
+ *     description: Upload a video with thumbnail. Requires authentication. Videos are automatically approved.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - video
+ *               - thumbnail
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "My Awesome Video"
+ *               description:
+ *                 type: string
+ *                 example: "This is a great video"
+ *               category:
+ *                 type: string
+ *                 example: "Entertainment"
+ *               tags:
+ *                 type: string
+ *                 example: "funny, tutorial, tech"
+ *               video:
+ *                 type: string
+ *                 format: binary
+ *               thumbnail:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Video uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Video uploaded successfully"
+ *                 video:
+ *                   $ref: '#/components/schemas/Video'
+ *       400:
+ *         description: Bad request - missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized - authentication required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 //creating upload video endpoint
 router.post("/upload", checkAuth, async (req, res) => {
     try {
@@ -125,6 +190,29 @@ router.delete("/delete/:id", checkAuth, async (req, res)=>{
     }
 })
 
+/**
+ * @swagger
+ * /api/v1/video/all:
+ *   get:
+ *     tags: [Videos]
+ *     summary: Get all videos
+ *     description: Retrieve all videos. No authentication required.
+ *     responses:
+ *       200:
+ *         description: List of all videos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Video'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 //get all videos
 router.get("/all", async (req, res) => {
     try {

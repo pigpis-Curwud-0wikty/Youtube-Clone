@@ -5,6 +5,57 @@ import { checkAuth } from '../Middleware/auth.middleware.js'
 
 const router = express.Router()
 
+/**
+ * @swagger
+ * /api/v1/comment/new:
+ *   post:
+ *     tags: [Comments]
+ *     summary: Add a new comment
+ *     description: Add a comment to a video. Requires authentication.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - video_id
+ *               - commentText
+ *             properties:
+ *               video_id:
+ *                 type: string
+ *                 example: "507f1f77bcf86cd799439011"
+ *               commentText:
+ *                 type: string
+ *                 example: "Great video!"
+ *     responses:
+ *       201:
+ *         description: Comment added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Comment added successfully"
+ *                 comment:
+ *                   $ref: '#/components/schemas/Comment'
+ *       400:
+ *         description: Bad request - missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.post('/new', checkAuth, async (req, res) => {
   try {
     const { video_id, commentText } = req.body
@@ -74,6 +125,40 @@ router.put('/:commentId', checkAuth, async (req, res) => {
   }
 })
 
+/**
+ * @swagger
+ * /api/v1/comment/comment/{videoId}:
+ *   get:
+ *     tags: [Comments]
+ *     summary: Get comments for a video
+ *     description: Retrieve all comments for a specific video. No authentication required.
+ *     parameters:
+ *       - in: path
+ *         name: videoId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The video ID
+ *         example: "507f1f77bcf86cd799439011"
+ *     responses:
+ *       200:
+ *         description: List of comments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 comments:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Comment'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Public: get comments by video
 router.get('/comment/:videoId', async (req, res) => {
   try {

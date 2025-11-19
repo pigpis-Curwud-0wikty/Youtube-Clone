@@ -1,0 +1,1294 @@
+openapi: 3.0.0
+info:
+  title: YouTube Clone API
+  version: 1.0.0
+  description: |
+    Complete API documentation for YouTube Clone application.
+    This API provides endpoints for user management, video uploads, and comments.
+  contact:
+    name: API Support
+    email: support@youtubeclone.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.youtubeclone.com
+    description: Production server
+
+tags:
+  - name: Users
+    description: User authentication and profile management
+  - name: Videos
+    description: Video upload, management, and viewing
+  - name: Comments
+    description: Video comments management
+
+paths:
+  # ==================== USER ROUTES ====================
+  /api/v1/user/signup:
+    post:
+      tags:
+        - Users
+      summary: Register a new user
+      description: Create a new user account with email verification. Requires ChannelName, email, phone, password, and logo image.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - ChannelName
+                - email
+                - phone
+                - password
+                - logoUrl
+              properties:
+                ChannelName:
+                  type: string
+                  example: "My Channel"
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                phone:
+                  type: string
+                  example: "+1234567890"
+                password:
+                  type: string
+                  format: password
+                  example: "SecurePassword123"
+                logoUrl:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: User created successfully. Verification email sent.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Signup successful. Please verify your email to activate your account."
+                  userId:
+                    type: string
+        '400':
+          description: Bad request - missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/user/login:
+    post:
+      tags:
+        - Users
+      summary: User login
+      description: Authenticate user with email and password. Returns JWT token for authenticated requests.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "SecurePassword123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  ChannelName:
+                    type: string
+                  email:
+                    type: string
+                  phone:
+                    type: string
+                  logoUrl:
+                    type: string
+                  token:
+                    type: string
+                    description: JWT token for authentication
+                  subscriber:
+                    type: number
+                  subscribedChannels:
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/user/forgot-password:
+    post:
+      tags:
+        - Users
+      summary: Request password reset
+      description: Send OTP code to user's email for password reset. OTP is valid for 10 minutes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+      responses:
+        '200':
+          description: OTP sent to email successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OTP sent to your email"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/user/reset-password:
+    post:
+      tags:
+        - Users
+      summary: Reset password with OTP
+      description: Reset user password using OTP code received via email. OTP must be valid and not expired.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - otp
+                - newPassword
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                otp:
+                  type: string
+                  example: "123456"
+                  description: 6-digit OTP code
+                newPassword:
+                  type: string
+                  format: password
+                  example: "NewSecurePassword123"
+      responses:
+        '200':
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Password reset successfully"
+        '400':
+          description: Invalid OTP or OTP expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/user/verify-email:
+    post:
+      tags:
+        - Users
+      summary: Verify email address
+      description: Verify user email using the verification code sent during signup.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - code
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                code:
+                  type: string
+                  example: "123456"
+                  description: 6-digit verification code
+      responses:
+        '200':
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email verified successfully"
+        '400':
+          description: Invalid verification code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/user/profile:
+    get:
+      tags:
+        - Users
+      summary: Get user profile
+      description: Get authenticated user's profile with statistics and recent videos.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  ChannelName:
+                    type: string
+                  email:
+                    type: string
+                  phone:
+                    type: string
+                  logoUrl:
+                    type: string
+                  subscriber:
+                    type: number
+                  subscribedChannels:
+                    type: array
+                    items:
+                      type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  stats:
+                    type: object
+                    properties:
+                      totalVideos:
+                        type: number
+                      totalViews:
+                        type: number
+                      totalLikes:
+                        type: number
+                  recentVideos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        title:
+                          type: string
+                        thumbnailUrl:
+                          type: string
+                        views:
+                          type: number
+                        likes:
+                          type: number
+                        createdAt:
+                          type: string
+                          format: date-time
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/user/update-profile:
+    put:
+      tags:
+        - Users
+      summary: Update user profile
+      description: Update user profile information. Logo is optional.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                ChannelName:
+                  type: string
+                  example: "Updated Channel Name"
+                phone:
+                  type: string
+                  example: "+1234567890"
+                logoUrl:
+                  type: string
+                  format: binary
+                  description: Optional - new logo image
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Profile updated Successfully"
+                  updatedUser:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/user/subscribe:
+    post:
+      tags:
+        - Users
+      summary: Subscribe to a channel
+      description: Subscribe to another user's channel. Cannot subscribe to your own channel.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ChannelId
+              properties:
+                ChannelId:
+                  type: string
+                  example: "507f1f77bcf86cd799439011"
+                  description: ID of the channel to subscribe to
+      responses:
+        '200':
+          description: Subscribed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subscribed successfully"
+                  data:
+                    type: object
+                    properties:
+                      currentUser:
+                        $ref: '#/components/schemas/User'
+                      subscribedUser:
+                        $ref: '#/components/schemas/User'
+        '400':
+          description: Cannot subscribe to yourself
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ==================== VIDEO ROUTES ====================
+  /api/v1/video/upload:
+    post:
+      tags:
+        - Videos
+      summary: Upload a new video
+      description: Upload a video with thumbnail. Requires authentication. Videos are automatically approved.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - video
+                - thumbnail
+              properties:
+                title:
+                  type: string
+                  example: "My Awesome Video"
+                description:
+                  type: string
+                  example: "This is a great video"
+                category:
+                  type: string
+                  example: "Entertainment"
+                tags:
+                  type: string
+                  example: "funny, tutorial, tech"
+                  description: Comma-separated tags
+                video:
+                  type: string
+                  format: binary
+                thumbnail:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Video uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Video uploaded successfully"
+                  video:
+                    $ref: '#/components/schemas/Video'
+        '400':
+          description: Bad request - missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/all:
+    get:
+      tags:
+        - Videos
+      summary: Get all videos
+      description: Retrieve all videos. No authentication required.
+      responses:
+        '200':
+          description: List of all videos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Video'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/my-videoes:
+    get:
+      tags:
+        - Videos
+      summary: Get my videos
+      description: Get all videos uploaded by the authenticated user.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of user's videos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Video'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/update/{id}:
+    put:
+      tags:
+        - Videos
+      summary: Update video
+      description: Update video metadata and/or thumbnail. Only the video owner can update.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Video ID
+          example: "507f1f77bcf86cd799439011"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Updated Video Title"
+                description:
+                  type: string
+                  example: "Updated description"
+                category:
+                  type: string
+                  example: "Education"
+                tags:
+                  type: string
+                  example: "updated, tags"
+                  description: Comma-separated tags
+                thumbnail:
+                  type: string
+                  format: binary
+                  description: Optional - new thumbnail image
+      responses:
+        '200':
+          description: Video updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Video updated successfully"
+                  video:
+                    $ref: '#/components/schemas/Video'
+        '403':
+          description: Unauthorized - not the video owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/delete/{id}:
+    delete:
+      tags:
+        - Videos
+      summary: Delete video
+      description: Delete a video. Only the video owner can delete.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Video ID
+          example: "507f1f77bcf86cd799439011"
+      responses:
+        '200':
+          description: Video deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Video deleted successfully"
+        '403':
+          description: Unauthorized - not the video owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/{id}:
+    get:
+      tags:
+        - Videos
+      summary: Get video by ID
+      description: Get a specific video by ID. View count is incremented automatically. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Video ID
+          example: "507f1f77bcf86cd799439011"
+      responses:
+        '200':
+          description: Video retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Video'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/like:
+    post:
+      tags:
+        - Videos
+      summary: Like a video
+      description: Like a video. If previously disliked, removes dislike and adds like.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - videoId
+              properties:
+                videoId:
+                  type: string
+                  example: "507f1f77bcf86cd799439011"
+      responses:
+        '200':
+          description: Video liked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Video liked successfully"
+                  video:
+                    $ref: '#/components/schemas/Video'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/dislike:
+    post:
+      tags:
+        - Videos
+      summary: Dislike a video
+      description: Dislike a video. If previously liked, removes like and adds dislike.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - videoId
+              properties:
+                videoId:
+                  type: string
+                  example: "507f1f77bcf86cd799439011"
+      responses:
+        '200':
+          description: Video disliked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Video disliked successfully"
+                  video:
+                    $ref: '#/components/schemas/Video'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/tags/{tag}:
+    get:
+      tags:
+        - Videos
+      summary: Get videos by tag
+      description: Retrieve all videos with a specific tag.
+      parameters:
+        - in: path
+          name: tag
+          required: true
+          schema:
+            type: string
+          description: Tag name
+          example: "tutorial"
+      responses:
+        '200':
+          description: List of videos with the tag
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Video'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/category/{category}:
+    get:
+      tags:
+        - Videos
+      summary: Get videos by category
+      description: Retrieve all videos in a specific category.
+      parameters:
+        - in: path
+          name: category
+          required: true
+          schema:
+            type: string
+          description: Category name
+          example: "Entertainment"
+      responses:
+        '200':
+          description: List of videos in the category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Video'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/video/search:
+    get:
+      tags:
+        - Videos
+      summary: Search videos
+      description: Search videos by title, description, tags, or category.
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema:
+            type: string
+          description: Search query
+          example: "tutorial"
+        - in: query
+          name: query
+          required: false
+          schema:
+            type: string
+          description: Alternative search query parameter
+          example: "tutorial"
+      responses:
+        '200':
+          description: List of matching videos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Video'
+        '400':
+          description: Search query is required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ==================== COMMENT ROUTES ====================
+  /api/v1/comment/new:
+    post:
+      tags:
+        - Comments
+      summary: Add a new comment
+      description: Add a comment to a video. Requires authentication.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - video_id
+                - commentText
+              properties:
+                video_id:
+                  type: string
+                  example: "507f1f77bcf86cd799439011"
+                commentText:
+                  type: string
+                  example: "Great video!"
+      responses:
+        '201':
+          description: Comment added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Comment added successfully"
+                  comment:
+                    $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad request - missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/comment/comment/{videoId}:
+    get:
+      tags:
+        - Comments
+      summary: Get comments for a video
+      description: Retrieve all comments for a specific video. No authentication required.
+      parameters:
+        - in: path
+          name: videoId
+          required: true
+          schema:
+            type: string
+          description: The video ID
+          example: "507f1f77bcf86cd799439011"
+      responses:
+        '200':
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Comment'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/comment/{commentId}:
+    put:
+      tags:
+        - Comments
+      summary: Update a comment
+      description: Update a comment. Only the comment owner can update.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: string
+          description: Comment ID
+          example: "507f1f77bcf86cd799439011"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - commentText
+              properties:
+                commentText:
+                  type: string
+                  example: "Updated comment text"
+      responses:
+        '200':
+          description: Comment updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Comment updated successfully"
+                  comment:
+                    $ref: '#/components/schemas/Comment'
+        '403':
+          description: Unauthorized - not the comment owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Comments
+      summary: Delete a comment
+      description: Delete a comment. Only the comment owner can delete.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: string
+          description: Comment ID
+          example: "507f1f77bcf86cd799439011"
+      responses:
+        '200':
+          description: Comment deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Comment deleted successfully"
+        '403':
+          description: Unauthorized - not the comment owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter JWT token
+
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        ChannelName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        logoUrl:
+          type: string
+          format: uri
+        subscriber:
+          type: number
+          default: 0
+        subscribedChannels:
+          type: array
+          items:
+            type: string
+        isVerified:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+
+    Video:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        videoUrl:
+          type: string
+          format: uri
+        thumbnailUrl:
+          type: string
+          format: uri
+        user_id:
+          type: string
+        category:
+          type: string
+          default: "General"
+        tags:
+          type: array
+          items:
+            type: string
+        likes:
+          type: array
+          items:
+            type: string
+        dislikes:
+          type: array
+          items:
+            type: string
+        views:
+          type: number
+          default: 0
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+          default: approved
+        createdAt:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/User'
+
+    Comment:
+      type: object
+      properties:
+        _id:
+          type: string
+        video_id:
+          type: string
+        user_id:
+          type: string
+        commentText:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/User'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+
+    Success:
+      type: object
+      properties:
+        message:
+          type: string

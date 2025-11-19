@@ -27,6 +27,69 @@ async function sendVerificationEmail(email, code) {
   });
 }
 
+/**
+ * @swagger
+ * /api/v1/user/signup:
+ *   post:
+ *     tags: [Users]
+ *     summary: Register a new user
+ *     description: Create a new user account with email verification. Requires ChannelName, email, phone, password, and logo image.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - ChannelName
+ *               - email
+ *               - phone
+ *               - password
+ *               - logoUrl
+ *             properties:
+ *               ChannelName:
+ *                 type: string
+ *                 example: "My Channel"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "user@example.com"
+ *               phone:
+ *                 type: string
+ *                 example: "+1234567890"
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "SecurePassword123"
+ *               logoUrl:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: User created successfully. Verification email sent.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Signup successful. Please verify your email to activate your account."
+ *                 userId:
+ *                   type: string
+ *       400:
+ *         description: Bad request - missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.post("/signup", async (req, res) => {
   try {
     console.log("Request received");
@@ -75,6 +138,59 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/v1/user/login:
+ *   post:
+ *     tags: [Users]
+ *     summary: User login
+ *     description: Authenticate user with email and password. Returns JWT token for authenticated requests.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "user@example.com"
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "SecurePassword123"
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 ChannelName:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 phone:
+ *                   type: string
+ *                 logoUrl:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                   description: JWT token for authentication
+ *       401:
+ *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.post("/login", async (req, res) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
