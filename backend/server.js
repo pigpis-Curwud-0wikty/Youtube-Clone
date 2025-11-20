@@ -38,6 +38,8 @@ app.use(
 )
 
 // Swagger API Documentation
+// Swagger API Documentation
+// Swagger API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'YouTube Clone API Documentation',
